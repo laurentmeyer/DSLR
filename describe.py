@@ -31,6 +31,5 @@ def main():
     except pd.errors.ParserError:
         print("Invalid argument: file not readable as CSV")
 
-
 if (__name__ == "__main__"):
 	main()

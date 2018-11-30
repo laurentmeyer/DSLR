@@ -18,5 +18,10 @@ sm = pd.plotting.scatter_matrix(data, c=colors, figsize=(18, 15))
 for subaxis in sm:
         for ax in subaxis:
             ax.xaxis.set_ticks([])
+            ax.xaxis.set_ticks([])
             ax.yaxis.set_ticks([])
+[s.xaxis.label.set_rotation(45) for s in sm.reshape(-1)]
+[s.yaxis.label.set_rotation(0) for s in sm.reshape(-1)]
+[s.yaxis.label.set_horizontalalignment('right') for s in sm.reshape(-1)]
+# [s.get_yaxis().set_label_coords(-0.7,0.5) for s in sm.reshape(-1)]
 plt.show()
