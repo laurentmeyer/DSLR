@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
 import pandas as pd
 import numpy as np
 from sys import argv
 import stats as stats
 
 def describe(dataset):
+    dataset['Left Handed'] = (dataset['Best Hand'] == 'Left').astype(float)
     dataset = dataset.dropna(axis='columns', how='all')
     dataset = dataset.select_dtypes(include=['float64'])
     desc = pd.DataFrame({
@@ -16,7 +18,8 @@ def describe(dataset):
         '75%': dataset.apply(stats.quartile_3),
         'Max': dataset.apply(stats.max),
     })
-    print(desc.T)
+    print("{}".format(desc.T))
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None): print(desc.T)
 
 def main():
     pd.options.display.float_format = '{:,.2f}'.format

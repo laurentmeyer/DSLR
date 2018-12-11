@@ -1,29 +1,27 @@
+#!/usr/bin/env python3
 import numpy as np
 import pandas as pd
 import math as math
 import utils as utils
 import sys as sys
 
-def prepare_X(parameters):
-    X = parameters.select_dtypes(include=['float64'])
-    X = X.dropna(axis=1, how='all')
-    X = X.apply(utils.fill_missing_data)
-    X = X.apply(utils.normalize)
-    X = utils.add_bias(X)
-    return X
-
 def g(z):
     return 1. / (1. + np.exp(-z))
 
-def cost(w, X, y):
-    h = g(X.dot(w.T))
-    return sum((-np.log(h) * y - np.log(1. - h) * ~y)) / len(y)
+def cost(X, y, w):
+    cost = 0.
+    h = g(X.dot(w))
+    for house in y.cat.categories:
+        yh = (y == house)
+        Xh = h[house]
+        cost = cost + sum((-np.log(Xh) * yh - np.log(1. - Xh) * ~yh)) / len(yh)
+    return cost
 
 def partial_deriv(w, X, y, j):
     h = g(X.dot(w.T))
     return sum(X[X.columns[j]] * (h - y)) / len(y)
 
-def iterate_one_vs_all(X, y, w, alpha=0.3):
+def iterate_one_vs_all(X, y, w, alpha=1.):
     w = w.copy()
     N = len(X.columns)
     for house in y.cat.categories:
@@ -41,12 +39,11 @@ def one_vs_all_epochs(X, y, epochs):
     w = [init] * epochs
     for i in range(1, epochs):
         w[i] = iterate_one_vs_all(X, y, w[i - 1])
-    # w = pd.DataFrame(index=X.columns)
     return w
 
-def one_vs_all(X, y, epochs=30):
-    return (one_vs_all_epochs(X, y, epochs))[epochs - 1]
-
+def one_vs_all(X, y, epochs=200):
+    e = one_vs_all_epochs(X, y, epochs)
+    return e[epochs - 1]
 
 def main():
     try:
@@ -57,10 +54,10 @@ def main():
     except OSError:
         print('Missing file')
         sys.exit(1)
-    X = prepare_X(parameters)
+    X = utils.prepare_X(parameters)
     y = parameters['Hogwarts House'].astype('category')
     w = one_vs_all(X, y)
-    w.to_csv('toto')
+    w.to_csv('weights.csv')
     return
 
 if (__name__ == "__main__"):

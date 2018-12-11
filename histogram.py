@@ -9,6 +9,7 @@ import utils as utils
 pd.options.display.float_format = '{:,.2f}'.format
 
 dataset = pd.read_csv('data/dataset_train.csv')
+dataset['Left Handed'] = (dataset['Best Hand'] == 'Left').astype(float)
 houses = list(dataset['Hogwarts House'].dropna().unique())
 subjects = list(dataset.select_dtypes(include=['float64']))
 bin_count = 20

@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 import numpy as np
 import pandas as pd
 import math as math
 import utils as utils
 import sys as sys
-import logreg_train as lt
 
 def predict(X, w):
     X = X.dot(w)
@@ -22,11 +22,11 @@ def main():
     except OSError:
         print('Missing file')
         sys.exit(1)
-    X = lt.prepare_X(X)
+    X = utils.prepare_X(X)
     X = predict(X, w)
     X.to_csv(path='houses.csv', header=True, index_label='Index')
     return
 
 
-# if (__name__ == "__main__"):
-	# main()
+if (__name__ == "__main__"):
+	main()
